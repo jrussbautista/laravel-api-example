@@ -19,7 +19,19 @@ class CategoryController extends Controller
     }
 
     public function store(StoreCategoryRequest $request) {
-        $category = Category::create($request->validated());
+
+        $data = $request->all();
+
+        if($request->hasFile('photo')) {
+            $file = $request->file('photo');
+            $fileName = 'categories/'.uniqid().'.'.$file->extension();
+            $file->storeAs('public', $fileName);
+            $data['photo'] = $fileName;
+        }
+
+        $category = Category::create($data);
+
+
         return new CategoryResource($category);
     }
 
